@@ -50,3 +50,8 @@ CREATE TABLE `tmall_trades` (
   KEY `idx_tmall_trades_created_shop_trans_status` (`created`,`shop_code`,`trans_status`),
   KEY `idx_tmall_trades_updatedat_shop_transstatus` (`updated_at`,`shop_code`,`trans_status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+# sample data
+# copy and paste sample to db table
+#'1', 'sand', 'T001', '0.00', NULL, '202003242200116270145986001', '柠檬草', '0', '0.00', 'NEW_CREATED', '2020-03-24 15:31:51', '2020-03-24 12:59:06', '40.00', '2020-03-31 11:51:14', '2020-03-31 11:51:20', '2020-03-24 12:59:15', '410.49', '0', '0.00', '0', '0.00', '堰*街道**镇堰桥东**号无锡市堰桥', '无锡市', '惠山区', '178********', '马****', '江苏省', '堰桥街道', '150000', 'Sand官方旗舰店', 'express', '1906832066105915242', 'TRADE_CLOSED', '1906832066105915242', 'Sand官方旗舰店', '1298.00', 'fixed', '2020-03-31 14:15:34', '', NULL, NULL, '0'

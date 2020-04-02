@@ -51,3 +51,6 @@ CREATE TABLE `tmall_refunds` (
   KEY `idx_tmall_refunds_created_shop_trans_status` (`created`,`shop_code`,`trans_status`),
   KEY `idx_tmall_refunds_updated_at_shop_trans_status` (`updated_at`,`shop_code`,`trans_status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#'1', 'sand', NULL, '', '柠檬草精灵_1990', '中通快递', '2020-03-30 01:02:38', '', '2020-03-31 11:51:14', NULL, 'BUYER_RETURNED_GOODS', '1', '2020-03-31 11:51:14', '1', NULL, '1906832066105915242', 'TRADE_CLOSED', 'SDJKA6112I', '0.00', NULL, '七天无理由退货', '410.49', '158249219321914252', 'onsale', '1585501358628', 'Sand官方旗舰店', NULL, '175339111366268', '14266294997987|颜色分类:撞色(99)MIX;尺码:160/S', NULL, NULL, 'SUCCESS', '1906832066105915242', 'Sand2020春新款学院风格子小西装外套女修身显气质', '410.49', 'T001', '2020-03-31 12:12:08', '', NULL, NULL, NULL

@@ -48,3 +48,6 @@ CREATE TABLE `tmall_orders` (
   KEY `idx_tmall_orders_outer_sku_id` (`outer_sku_id`),
   KEY `idx_tmall_orders_created_shop_trans_status` (`created`,`shop_code`,`trans_status`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
+
+#'1', 'eland', '1', 'T001', '0.00', '0', '10008897', '2020-03-24 15:31:51', '2020-03-24 12:59:06', '847.51', '410.49', '2020-03-31 11:51:14', 'SF11019782166', '0', '顺丰速运', '1', '1607699218676', '1906832066105915242', 'SDJKA6112I', 'SDJKA6112I80160', '40.00', '410.49', '', '1298.00', '158249219321914252', 'SUCCESS', '0', 'B', 'express', '14266294997987', '颜色分类:撞色(99)MIX;尺码:160/S', 'TRADE_CLOSED', '1906832066105915242', 'Sand2020学院风格子小西装外套', '450.49', NULL, NULL, NULL

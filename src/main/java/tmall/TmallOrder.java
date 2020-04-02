@@ -1,7 +1,13 @@
 package tmall;
 
+import utils.DataConnection;
+
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 
 public class TmallOrder {
 
@@ -175,11 +181,11 @@ public class TmallOrder {
     this.invoiceNo = invoiceNo;
   }
 
-  public Boolean getDaixiao() {
+  public Boolean getIsDaixiao() {
     return isDaixiao;
   }
 
-  public void setDaixiao(Boolean daixiao) {
+  public void setIsDaixiao(Boolean daixiao) {
     isDaixiao = daixiao;
   }
 
@@ -351,4 +357,78 @@ public class TmallOrder {
     this.transAt = transAt;
   }
   //</editor-fold>
+
+  public static TmallOrder transfer(ResultSet rs) throws Exception {
+    if (rs == null) {
+      return null;
+    }
+    Map<String, Integer> columnMap = DataConnection.fetchColumnMap(rs);
+    TmallOrder order = new TmallOrder();
+    order.setId(rs.getLong("b.id"));
+    order.setTenantCode(rs.getString("b.tenant_code"));
+    order.setTmallTradeId(rs.getString("b.tmall_trade_id"));
+    order.setShopCode(rs.getString("b.shop_code"));
+    order.setTid(rs.getLong("b.tid"));
+    order.setOid(rs.getLong("b.oid"));
+    order.setRefundId(rs.getLong("b.refund_id"));
+    order.setAdjustFee(rs.getBigDecimal("b.adjust_fee"));
+    order.setBuyerRate(rs.getBoolean("b.buyer_rate"));
+    order.setCid(rs.getLong("b.cid"));
+    order.setConsignTime(rs.getTimestamp("b.consign_time"));
+    order.setDiscountFee(rs.getBigDecimal("b.discount_fee"));
+    order.setDivideOrderFee(rs.getBigDecimal("b.divide_order_fee"));
+    order.setEndTime(rs.getTimestamp("b.end_time"));
+    order.setInvoiceNo(rs.getString("b.invoice_no"));
+    order.setIsDaixiao(rs.getBoolean("b.is_daixiao"));
+    order.setLogisticsCompany(rs.getString("b.logistics_company"));
+    order.setNum(rs.getInt("b.num"));
+    order.setNumIid(rs.getLong("b.num_iid"));
+    order.setOuterIid(rs.getString("b.outer_iid"));
+    order.setOuterSkuId(rs.getString("b.outer_sku_id"));
+    order.setPartMjzDiscount(rs.getBigDecimal("b.part_mjz_discount"));
+    order.setPayment(rs.getBigDecimal("b.payment"));
+    order.setPicPath(rs.getString("b.pic_path"));
+    order.setPrice(rs.getBigDecimal("b.price"));
+    order.setRefundStatus(rs.getString("b.refund_status"));
+    order.setSellerRate(rs.getBoolean("b.seller_rate"));
+    order.setSellerType(rs.getString("b.seller_type"));
+    order.setShippingType(rs.getString("b.shipping_type"));
+    order.setSkuId(rs.getLong("b.sku_id"));
+    order.setSkuPropertiesName(rs.getString("b.sku_properties_name"));
+    order.setStatus(rs.getString("b.status"));
+    order.setTitle(rs.getString("b.title"));
+    order.setTotalFee(rs.getBigDecimal("b.total_fee"));
+    if (columnMap.containsKey("trans_status")) {
+      order.setTransStatus(rs.getString("trans_status"));
+    }
+    if (columnMap.containsKey("trans_msg")) {
+      order.setTransMsg(rs.getString("trans_msg"));
+    }
+    if (columnMap.containsKey("trans_at")) {
+      order.setTransAt(rs.getTimestamp("trans_at"));
+    }
+    return order;
+  }
+
+  public void updateTransStatus(String transStatus, String transMsg) throws Exception {
+    PreparedStatement pstmt = null;
+    try {
+      String query = "update tmall_orders \n" +
+          "set trans_status=?, \n" +
+          "trans_at=?, \n" +
+          "trans_msg=? \n" +
+          "where id=?";
+      pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
+      int index = 1;
+      pstmt.setString(index++, transStatus);
+      pstmt.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
+      pstmt.setString(index++, transMsg);
+      pstmt.setLong(index++, this.id);
+      pstmt.executeUpdate();
+    } finally {
+      DataConnection.close(null, pstmt, null);
+    }
+  }
+
+
 }
