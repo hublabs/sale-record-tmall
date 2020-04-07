@@ -1,5 +1,6 @@
 package tmall;
 
+import sale.OrderTransStatus;
 import utils.DataConnection;
 
 import java.math.BigDecimal;
@@ -428,6 +429,10 @@ public class TmallOrder {
     } finally {
       DataConnection.close(null, pstmt, null);
     }
+  }
+
+  //TODO: batch update order trans status logic
+  public static void updateTransStatus(Map<Long, OrderTransStatus> orderTransStatusMap) {
   }
 
 
