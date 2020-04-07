@@ -1,5 +1,6 @@
 package tmall;
 
+import sale.TradeTransStatus;
 import utils.DataConnection;
 
 import java.math.BigDecimal;
@@ -968,14 +969,11 @@ public class TmallTrade {
     }
   }
 
-  public static void main(String... args) throws Exception {
-    String tenantCode = "sand";
-    String shopCode = "T001";
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    Date fromDate = df.parse("2020-03-23 00:00:00");
-    Date toDate = df.parse("2020-03-26 00:00:00");
-    List<TmallTrade> tmallTradeList = TmallTrade.findReadyDataByShopAndPeriod(tenantCode, shopCode,fromDate, toDate,false,PeriodType.CREATED);
+  public void updateTransStatus(TradeTransStatus tradeTransStatus) {
+    updateTransStatus(tradeTransStatus, null);
+  }
+  //TODO: 下一个迭代进行
+  public void updateTransStatus(TradeTransStatus tradeTransStatus, String detailMsg) {
 
-    System.out.println(tmallTradeList.size());
   }
 }
