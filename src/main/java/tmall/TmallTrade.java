@@ -632,7 +632,7 @@ public class TmallTrade {
         query += "and a.trans_status in ('') \n";
       }
       query += "order by a.id";
-//      LOG.info("query: " + query + " \n shop:" + shopCode + "; period: " + EhubUtil.toCsvField(fromDate) + "~" + EhubUtil.toCsvField(toDate));
+//      LOG.info("query: " + query + " \n shop:" + shopCode + "; period: " + DateUtil.toCsvField(fromDate) + "~" + DateUtil.toCsvField(toDate));
       pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
       int index = 1;
       pstmt.setString(index++, shopCode);
@@ -969,11 +969,28 @@ public class TmallTrade {
     }
   }
 
-  public void updateTransStatus(TradeTransStatus tradeTransStatus) {
+  public void updateTransStatus(TradeTransStatus tradeTransStatus) throws Exception {
     updateTransStatus(tradeTransStatus, null);
   }
-  //TODO: 下一个迭代进行
-  public void updateTransStatus(TradeTransStatus tradeTransStatus, String detailMsg) {
 
+  public void updateTransStatus(TradeTransStatus tradeTransStatus, String detailMsg) throws Exception {
+    String sql = "update tmall_trades \n" +
+        "set trans_status = ?, \n" +
+        "trans_msg = ?, \n" +
+        "trans_at = ? \n" +
+        "where id=?";
+    PreparedStatement stmt = null;
+    try {
+      stmt = DataConnection.getInstance().getAppConn().prepareStatement(sql);
+      Date nowDate = new Date();
+      int index = 1;
+      stmt.setString(index++, tradeTransStatus.name());
+      stmt.setString(index++, tradeTransStatus == TradeTransStatus.E0 ? detailMsg : tradeTransStatus.getTransMsg());
+      stmt.setObject(index++, new Timestamp(nowDate.getTime()), Types.TIMESTAMP);
+      stmt.setLong(index++, this.getId());
+      stmt.executeUpdate();
+    } finally {
+      DataConnection.close(null, stmt, null);
+    }
   }
 }
