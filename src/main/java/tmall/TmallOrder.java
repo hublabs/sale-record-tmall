@@ -431,9 +431,28 @@ public class TmallOrder {
     }
   }
 
-  //TODO: batch update order trans status logic
-  public static void updateTransStatus(Map<Long, OrderTransStatus> orderTransStatusMap) {
+  public static void updateTransStatus(Map<Long, OrderTransStatus> orderTransStatusMap) throws Exception {
+    PreparedStatement pstmt = null;
+    try {
+      String query = "update tmall_orders \n" +
+          "set trans_status=?, \n" +
+          "trans_at=?, \n" +
+          "trans_msg=? \n" +
+          "where oid=? ";
+      pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
+      for(Map.Entry<Long, OrderTransStatus> eachOrderTransStatus: orderTransStatusMap.entrySet()) {
+        int index = 1;
+        OrderTransStatus transStatusType = eachOrderTransStatus.getValue();
+        pstmt.setString(index++, transStatusType.name());
+        pstmt.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
+        pstmt.setString(index++, transStatusType.getTransMsg());
+        pstmt.setLong(index++, eachOrderTransStatus.getKey());
+        pstmt.addBatch();
+      }
+      pstmt.executeBatch();
+      pstmt.clearBatch();
+    } finally {
+      DataConnection.close(null, pstmt, null);
+    }
   }
-
-
 }
