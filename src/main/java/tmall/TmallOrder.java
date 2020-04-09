@@ -411,6 +411,27 @@ public class TmallOrder {
     return order;
   }
 
+  public static TmallOrder findByOid(Long oid) throws Exception {
+    TmallOrder orderIncr = null;
+    PreparedStatement pstmt = null;
+    ResultSet rs = null;
+    try{
+      String query = "select b.* \n" +
+          "from tmall_orders b \n" +
+          "where oid=?";
+      pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
+      int index = 1;
+      pstmt.setLong(index++, oid);
+      rs = pstmt.executeQuery();
+      while(rs.next()){
+        orderIncr = TmallOrder.transfer(rs);
+      }
+      return orderIncr;
+    } finally {
+      DataConnection.close(null, pstmt, rs);
+    }
+  }
+
   public void updateTransStatus(String transStatus, String transMsg) throws Exception {
     PreparedStatement pstmt = null;
     try {

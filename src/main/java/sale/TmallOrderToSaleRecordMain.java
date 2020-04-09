@@ -3,6 +3,7 @@ package sale;
 import masterdata.OnlineShop;
 import org.apache.commons.cli.*;
 import tmall.PeriodType;
+import tmall.TmallRefund;
 import tmall.TmallTrade;
 import utils.DataConnection;
 import utils.DateUtil;
@@ -82,7 +83,20 @@ public class TmallOrderToSaleRecordMain {
           }
         }
 
-        //TODO: generate refund sale logic
+        //generate refund sale logic
+        List<TmallRefund> tmallRefundList = TmallRefund.findReadyDataByShopAndPeriod(tenantCode, eachShop.getShopCode(), eachTimeRange.getFromDate(), eachTimeRange.getToDate(), onlyFailed, periodType);
+//    LOG.info(tmallTradeList.size() + " row sale data fetched.");
+        if (!tmallRefundList.isEmpty()) {
+          int countData = 0;
+          for (TmallRefund eachRefund : tmallRefundList) {
+            countData++;
+            SaleGenerator.generateRefundSaleRecord(eachRefund);
+            if (countData % 100 == 0 || countData == tmallRefundList.size()) {
+              //TODO: log feature to next sprint
+//              LOG.info("start modified:" + dfLite.format(eachTrade.getModified()) + "; complete count:" + countData);
+            }
+          }
+        }
       }
     }
   }

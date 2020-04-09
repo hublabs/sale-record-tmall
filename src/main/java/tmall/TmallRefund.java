@@ -1,5 +1,6 @@
 package tmall;
 
+import sale.OrderTransStatus;
 import utils.DataConnection;
 
 import java.math.BigDecimal;
@@ -759,7 +760,7 @@ public class TmallRefund {
     }
   }
 
-  public void updateTransStatus(String transStatus, String msg) throws Exception {
+  public void updateTransStatus(OrderTransStatus transStatus) throws Exception {
     PreparedStatement pstmt = null;
     try {
       String query = "update tmall_refunds \n" +
@@ -769,8 +770,8 @@ public class TmallRefund {
           "where refund_id=? \n";
       pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
       int index = 1;
-      pstmt.setString(index++, transStatus);
-      pstmt.setString(index++, msg);
+      pstmt.setString(index++, transStatus.name());
+      pstmt.setString(index++, transStatus.getTransMsg());
       pstmt.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
       pstmt.setLong(index++, this.getRefundId());
       pstmt.executeUpdate();

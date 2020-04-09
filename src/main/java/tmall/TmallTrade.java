@@ -657,6 +657,25 @@ public class TmallTrade {
     }
   }
 
+  public static TmallTrade findOnlyTradeByTid(Long tid) throws Exception {
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      String query = "select a.* \n" +
+          "from tmall_trades a \n" +
+          "where a.tid=" + tid;
+      stmt = DataConnection.getInstance().getAppConn().createStatement();
+      rs = stmt.executeQuery(query);
+      TmallTrade tmallTrade = null;
+      if (rs.next()) {
+        tmallTrade = TmallTrade.transfer(rs);
+      }
+      return tmallTrade;
+    } finally {
+      DataConnection.close(null, stmt, rs);
+    }
+  }
+
   static PreparedStatement pstmtInTrade;
   static PreparedStatement pstmtInOrder;
   static PreparedStatement pstmtUpTrade;
@@ -733,6 +752,40 @@ public class TmallTrade {
       DataConnection.close(null, stmt, rs);
     }
     return tradeMap;
+  }
+
+  public static TmallTrade findByTid(Long paramTid) throws Exception {
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      String query = "select a.*,b.* \n" +
+          "from tmall_trades a \n" +
+          "inner join tmall_orders b \n" +
+          "on a.id = b.tmall_trade_id \n" +
+          "where a.tid=" + paramTid;
+      stmt = DataConnection.getInstance().getAppConn().createStatement();
+      rs = stmt.executeQuery(query);
+      Long before_id = null;
+      Long before_tid = null;
+      TmallTrade tmallTrade = null;
+      while (rs.next()) {
+        Long id = rs.getLong("a.id");
+        Long tid = rs.getLong("a.tid");
+        if (before_id != null && before_tid != null && !id.equals(before_id) && tid.compareTo(before_tid) == 0) {
+          break;
+        }
+        if (!id.equals(before_id)) {
+          tmallTrade = TmallTrade.transfer(rs);
+          before_id = id;
+          before_tid = tid;
+        }
+        TmallOrder tmallOrder = TmallOrder.transfer(rs);
+        tmallTrade.addTmallOrder(tmallOrder);
+      }
+      return tmallTrade;
+    } finally {
+      DataConnection.close(null, stmt, rs);
+    }
   }
 
   public static void insert(String tenantCode, String channelShopCode, List<TmallTrade> inTradeList) throws Exception {
