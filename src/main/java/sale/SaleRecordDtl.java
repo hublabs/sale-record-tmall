@@ -1,15 +1,15 @@
 package sale;
 
 import tmall.TmallOrder;
+import tmall.TmallRefund;
 import tmall.TmallTrade;
+import utils.DataConnection;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class SaleRecordDtl {
 
@@ -248,11 +248,51 @@ public class SaleRecordDtl {
     return saleRecordDtl;
   }
 
+  public static SaleRecordDtl transToRefundSale(List<SaleRecordDtl> lastSaleDtlList, TmallRefund tmallRefund) {
+    return null;
+  }
+  public static SaleRecordDtl transToRefundSale(SaleRecordDtl saleDtl, TmallRefund tmallRefund) {
+    if (saleDtl == null) {
+      return null;
+    }
+    BigDecimal MINUS_ONE = new BigDecimal(-1);
+    SaleRecordDtl refundSaleDtl = new SaleRecordDtl();
+    //TODO: 需要在salerecord业务了解后进行
+    refundSaleDtl.setSaleRecordId(null);
+    refundSaleDtl.setOrderItemId(null);
+    refundSaleDtl.setRefundItemId(null);
+    refundSaleDtl.setBrandId(null);
+    refundSaleDtl.setBrandCode(null);
+    refundSaleDtl.setProductId(null);
+    refundSaleDtl.setSkuId(null);
+    refundSaleDtl.setFeeRate(null);
+
+    refundSaleDtl.setListPrice(saleDtl.getListPrice());
+    refundSaleDtl.setSalePrice(saleDtl.getSalePrice());
+    refundSaleDtl.setQuantity(saleDtl.getQuantity() * -1);
+    refundSaleDtl.setTotalListPrice(saleDtl.getTotalListPrice());
+    refundSaleDtl.setTotalDiscountPrice(saleDtl.getTotalDiscountPrice().multiply(MINUS_ONE));
+    refundSaleDtl.setTotalPaymentPrice(saleDtl.getTotalPaymentPrice().multiply(MINUS_ONE));
+
+    refundSaleDtl.setTid(tmallRefund.getTid());
+    refundSaleDtl.setOid(tmallRefund.getOid());
+    refundSaleDtl.setTradeCreated(saleDtl.getTradeCreated());
+    refundSaleDtl.setReceivedAt(tmallRefund.getEndTime());
+    return refundSaleDtl;
+  }
+
   //TODO: find oid from saleRecordDtl by tid
   public static Map<Long, Boolean> findOidMap(long tid) throws Exception {
     Map<Long, Boolean> oidMap = new HashMap<>();
 
     return oidMap;
+  }
+
+  //TODO: fetch sale record dtl by oid
+  public static List<SaleRecordDtl> findByOid(Long oid) throws Exception {
+    List<SaleRecordDtl> saleDtlList = new ArrayList<>();
+
+    return saleDtlList;
   }
 
 

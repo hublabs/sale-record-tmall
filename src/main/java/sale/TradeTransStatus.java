@@ -1,10 +1,10 @@
 package sale;
 
 public enum TradeTransStatus {
-  S1("All completed."),
-  S4("Canceled trade."),
-  N("Not All completed."),
-  E0("system error.");
+  DONE_SUCCESS_TRADE("trade success."),
+  DONE_CANCEL_TRADE("trade canceled."),
+  WAIT("wait consign."),
+  ERR_SYS("system error.");
   private String transMsg;
 
   TradeTransStatus(String transMsg) {
