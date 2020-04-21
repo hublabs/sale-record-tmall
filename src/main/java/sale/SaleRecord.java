@@ -1,8 +1,11 @@
 package sale;
 
 import tmall.TmallTrade;
+import utils.DataConnection;
 
 import java.math.BigDecimal;
+import java.sql.PreparedStatement;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -225,5 +228,25 @@ public class SaleRecord {
   //TODO: 在下一个迭代进行
   public void save() throws Exception {
 
+  }
+
+  public void updateStatus(String status, String msg) throws Exception {
+    PreparedStatement pstmt = null;
+    String query = "update sale_records \n" +
+        "set send_status=?, \n" +
+        "send_msg=?, \n" +
+        "send_at=? \n" +
+        "where id=?";
+    try{
+      pstmt = DataConnection.getInstance().getAppConn().prepareStatement(query);
+      int index = 1;
+      pstmt.setString(index++, status);
+      pstmt.setString(index++, msg);
+      pstmt.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
+      pstmt.setLong(index++, this.getId());
+      pstmt.executeUpdate();
+    } finally {
+      DataConnection.close(null, pstmt, null);
+    }
   }
 }
