@@ -19,6 +19,22 @@ public class SaleGenerator {
       Map<Long, Boolean> existSaleDtlMap = SaleRecordDtl.findOidMap(trade.getTid());
 
       List<SaleRecordDtl> saleRecordDtlList = new ArrayList<>();
+      //发货前取消订单
+      if (trade.getConsignTime() == null && "TRADE_CLOSED|TRADE_CLOSED_BY_TAOBAO".indexOf(trade.getStatus()) >= 0) {
+        for (TmallOrder eachOrder : trade.getTmallOrders()) {
+          orderTransStatusMap.put(eachOrder.getOid(), OrderTransStatus.DONE_CANCEL_ORDER);
+        }
+
+        TmallOrder.updateTransStatus(orderTransStatusMap);
+        orderTransStatusMap.clear();
+        trade.updateTransStatus(TradeTransStatus.DONE_CANCEL_TRADE,"trade canceled.");
+
+        if (!"test".equals(System.getProperty("APP_ENV"))) {
+          appConn.commit();
+        }
+
+        return;
+      }
 
       for (TmallOrder eachOrder : trade.getTmallOrders()) {
         //1.是否还没有发货
