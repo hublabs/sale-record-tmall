@@ -1038,7 +1038,7 @@ public class TmallTrade {
       Date nowDate = new Date();
       int index = 1;
       stmt.setString(index++, tradeTransStatus.name());
-      stmt.setString(index++, tradeTransStatus == TradeTransStatus.E0 ? detailMsg : tradeTransStatus.getTransMsg());
+      stmt.setString(index++, tradeTransStatus == TradeTransStatus.ERR_SYS ? detailMsg : tradeTransStatus.getTransMsg());
       stmt.setObject(index++, new Timestamp(nowDate.getTime()), Types.TIMESTAMP);
       stmt.setLong(index++, this.getId());
       stmt.executeUpdate();

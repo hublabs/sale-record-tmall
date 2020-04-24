@@ -4,11 +4,13 @@ import tmall.TmallOrder;
 import tmall.TmallRefund;
 import tmall.TmallTrade;
 import utils.DataConnection;
+import utils.ResourceUtil;
 
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.Timestamp;
 import java.util.*;
 
 public class SaleRecordDtl {
@@ -19,7 +21,7 @@ public class SaleRecordDtl {
   private Long orderItemId;
   private Long refundItemId;
   private Long brandId;
-  private String  brandCode;
+  private String brandCode;
   private Long productId;
   private Long skuId;
   private BigDecimal feeRate;
@@ -209,8 +211,74 @@ public class SaleRecordDtl {
   }
   //</editor-fold>
 
+  //<editor-fold desc="QUERY">
+  String QUERY_INSERT_SALE_RECORD_DTL = "insert into sale_record_dtls (\n" +
+      "sale_record_id,\n" +
+      "order_item_id,\n" +
+      "refund_item_id,\n" +
+      "brand_id,\n" +
+      "brand_code,\n" +
+      "product_id,\n" +
+      "sku_id,\n" +
+      "fee_rate,\n" +
+      "list_price,\n" +
+      "sale_price,\n" +
+      "quantity,\n" +
+      "total_list_price,\n" +
+      "total_discount_price,\n" +
+      "total_payment_price,\n" +
+      "tid,\n" +
+      "oid,\n" +
+      "refund_id,\n" +
+      "trade_created,\n" +
+      "received_at,\n" +
+      "created_at )\n" +
+      "values (\n" +
+      "?,?,?,?,?,\n" +
+      "?,?,?,?,?,\n" +
+      "?,?,?,?,?,\n" +
+      "?,?,?,?,?\n" +
+      ");";
+  //</editor-fold>
+
+  public static SaleRecordDtl transfer(ResultSet rs) throws Exception {
+    if (rs == null) {
+      return null;
+    }
+    SaleRecordDtl saleRecordDtl = new SaleRecordDtl();
+    saleRecordDtl.setId(rs.getLong("b.id"));
+    saleRecordDtl.setSaleRecordId(rs.getLong("b.sale_record_id"));
+    saleRecordDtl.setOrderItemId(rs.getLong("b.order_item_id"));
+    saleRecordDtl.setRefundItemId(rs.getLong("b.refund_item_id"));
+    if (rs.wasNull()) {
+      saleRecordDtl.setRefundItemId(null);
+    }
+    saleRecordDtl.setBrandId(rs.getLong("b.brand_id"));
+    saleRecordDtl.setBrandCode(rs.getString("b.brand_code"));
+    saleRecordDtl.setProductId(rs.getLong("b.product_id"));
+    saleRecordDtl.setSkuId(rs.getLong("b.sku_id"));
+    saleRecordDtl.setFeeRate(rs.getBigDecimal("b.fee_rate"));
+    saleRecordDtl.setListPrice(rs.getBigDecimal("b.list_price"));
+    saleRecordDtl.setSalePrice(rs.getBigDecimal("b.sale_price"));
+    saleRecordDtl.setQuantity(rs.getInt("b.quantity"));
+    saleRecordDtl.setTotalListPrice(rs.getBigDecimal("b.total_list_price"));
+    saleRecordDtl.setTotalDiscountPrice(rs.getBigDecimal("b.total_discount_price"));
+    saleRecordDtl.setTotalPaymentPrice(rs.getBigDecimal("b.total_payment_price"));
+    saleRecordDtl.setTid(rs.getLong("b.tid"));
+    saleRecordDtl.setOid(rs.getLong("b.oid"));
+    saleRecordDtl.setRefundId(rs.getLong("b.refund_id"));
+    if (rs.wasNull()) {
+      saleRecordDtl.setRefundId(null);
+    }
+    saleRecordDtl.setTradeCreated(rs.getTimestamp("b.trade_created"));
+    saleRecordDtl.setReceivedAt(rs.getTimestamp("b.received_at"));
+    saleRecordDtl.setCreatedAt(rs.getTimestamp("b.created_at"));
+
+    return saleRecordDtl;
+  }
+
   public static SaleRecordDtl generate(TmallOrder tmallOrder) throws Exception {
-    if(tmallOrder == null) {
+    if (tmallOrder == null) {
       return null;
     }
     BigDecimal listPrice = tmallOrder.getPrice();
@@ -251,6 +319,7 @@ public class SaleRecordDtl {
   public static SaleRecordDtl transToRefundSale(List<SaleRecordDtl> lastSaleDtlList, TmallRefund tmallRefund) {
     return null;
   }
+
   public static SaleRecordDtl transToRefundSale(SaleRecordDtl saleDtl, TmallRefund tmallRefund) {
     if (saleDtl == null) {
       return null;
@@ -295,5 +364,38 @@ public class SaleRecordDtl {
     return saleDtlList;
   }
 
+  static PreparedStatement saleRecordDtlPstmt = null;
 
+  public void save() throws Exception {
+    if (saleRecordDtlPstmt == null) {
+      saleRecordDtlPstmt = DataConnection.getInstance().getAppConn().prepareStatement(QUERY_INSERT_SALE_RECORD_DTL);
+      DataConnection.getInstance().addPreparedStmt(saleRecordDtlPstmt);
+    }
+    SaleRecordDtl.setInsertPstmt(this, saleRecordDtlPstmt);
+    saleRecordDtlPstmt.executeUpdate();
+  }
+
+  private static void setInsertPstmt(SaleRecordDtl saleRecordDtl, PreparedStatement pstmt) throws Exception {
+    int index = 1;
+    pstmt.setLong(index++, saleRecordDtl.getSaleRecordId());
+    pstmt.setObject(index++, saleRecordDtl.getOrderItemId());
+    pstmt.setObject(index++, saleRecordDtl.getRefundItemId());
+    pstmt.setObject(index++, saleRecordDtl.getBrandId());
+    pstmt.setString(index++, saleRecordDtl.getBrandCode());
+    pstmt.setObject(index++, saleRecordDtl.getProductId());
+    pstmt.setObject(index++, saleRecordDtl.getSkuId());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getFeeRate());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getListPrice());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getSalePrice());
+    pstmt.setInt(index++, saleRecordDtl.getQuantity());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getTotalListPrice());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getTotalDiscountPrice());
+    pstmt.setBigDecimal(index++, saleRecordDtl.getTotalPaymentPrice());
+    pstmt.setLong(index++, saleRecordDtl.getTid());
+    pstmt.setLong(index++, saleRecordDtl.getOid());
+    pstmt.setObject(index++, saleRecordDtl.getRefundId());
+    pstmt.setTimestamp(index++, new Timestamp(saleRecordDtl.getTradeCreated().getTime()));
+    pstmt.setTimestamp(index++, saleRecordDtl.getReceivedAt() == null ? null : new Timestamp(saleRecordDtl.getReceivedAt().getTime()));
+    pstmt.setTimestamp(index++, new Timestamp(System.currentTimeMillis()));
+  }
 }
